@@ -1,4 +1,4 @@
-use bb_save_editor;
+use bb_save_access;
 use eframe::egui;
 use egui::Ui;
 use serde_json::Value;
@@ -79,7 +79,7 @@ fn golden_shard_ui(state: &mut AppData, ui: &mut Ui) {
 }
 
 fn load_save(state: &mut AppData) {
-    let data = bb_save_editor::savefile_read();
+    let data = bb_save_access::savefile_read();
     state.save_data = data.0;
     state.save_iv = data.1;
     state.save_carry = data.2;
@@ -108,7 +108,7 @@ impl eframe::App for AppData {
             ui.separator();
             if self.save_data_exists {
                 if ui.button("Save").clicked() {
-                    bb_save_editor::savefile_writejson(
+                    bb_save_access::savefile_writejson(
                         self.save_data.clone(),
                         self.save_iv.clone(),
                         self.save_carry,
