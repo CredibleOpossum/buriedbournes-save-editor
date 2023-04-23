@@ -1,5 +1,5 @@
 [package]
-name = "bb_save_editor"
+name = "bb_save_access"
 version = "0.1.0"
 edition = "2021"
 
