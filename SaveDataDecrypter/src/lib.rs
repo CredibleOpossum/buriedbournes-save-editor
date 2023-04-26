@@ -17,6 +17,26 @@ const IV_SIZE: usize = 16;
 
 type Aes256Cbc = Cbc<Aes256, Pkcs7>;
 
+pub fn backup() -> Vec<u8> {
+    let hklm = RegKey::predef(HKEY_CURRENT_USER);
+    let data_location = hklm.open_subkey(SAVE_LOCATION).unwrap();
+    let bytes = data_location.get_raw_value(SAVE_NAME).unwrap().bytes;
+    println!("{:?}", bytes);
+    bytes
+}
+
+pub fn restore(bytes: Vec<u8>) {
+    println!("{:?}", bytes);
+    let hklm = RegKey::predef(HKEY_CURRENT_USER);
+    let reg_data = RegValue {
+        vtype: REG_BINARY,
+        bytes: bytes,
+    };
+    let path = Path::new(SAVE_LOCATION);
+    let (key, _disp) = hklm.create_subkey(path).unwrap();
+    key.set_raw_value(SAVE_NAME, &reg_data).unwrap();
+}
+
 fn decrypt(cipher_bytes: &[u8], iv: &[u8]) -> Result<String, Box<dyn error::Error>> {
     let mut encrypted_data = cipher_bytes.to_owned();
     let cipher = Aes256Cbc::new_from_slices(SAVE_KEY, iv)?;
